@@ -1,0 +1,19 @@
+{
+  "name": "2dg-civ",
+  "version": "1.0.0",
+  "description": "Simple Civ Game",
+  "main": "main.js",
+  "scripts": {
+    "test": "http-server ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FishbaitHarry/2dg-civ.git"
+  },
+  "author": "FishbaitHarry",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FishbaitHarry/2dg-civ/issues"
+  },
+  "homepage": "https://github.com/FishbaitHarry/2dg-civ#readme"
+}

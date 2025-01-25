@@ -1,18 +1,25 @@
-import { RED, GREEN, BLUE, colors, counterColors } from "./basics";
-import { playerHand, eventQueue } from "./setupEvents";
-import { barbarianOpponent, nomadOpponent } from "./opponents";
+import { RED, GREEN, BLUE, colors, counterColors } from "./basics.js";
+import { playerHand, eventQueue } from "./setupEvents.js";
+import { barbarianOpponent, nomadOpponent } from "./opponents.js";
 
-const defaultState = {
+const defaultPlayer = {
+  displayName: 'Player',
+  hand: playerHand,
+};
+export const defaultState = {
   playerHand,
   opponents: [barbarianOpponent, nomadOpponent],
+  civilizations: [defaultPlayer, barbarianOpponent, nomadOpponent],
   currentEvent: eventQueue.shift(),
   eventQueue,
+  eventLog: [],
 };
 const defaultAction = {
   playedCardIndex: 0,
 };
 
-function reduceState(state=defaultState, action=defaultAction) {
+export function reduceState(state=defaultState, action=defaultAction) {
+  const newEvents = [{ description: "New round" }];
   const playerPlayed = state.playerHand[action.playedCardIndex];
   const oppPlayed = state.opponents.map( opp => opp.getMove(state, opp.hand) );
   const allPlayed = [playerPlayed].concat(oppPlayed);
@@ -57,15 +64,17 @@ function reduceState(state=defaultState, action=defaultAction) {
   });
 
   if (civs[0].hand.length == 0) {
-    // you lost the game
+    newEvents.push({ description: "You lost the game." });
   }
   // remove defeated opponents
-  const newOpps = civs.slice(1).filter( civ => civ.hand.length );
+  const newCivs = civs.filter( civ => civ.hand.length );
 
   return {
-    playerHand,
-    opponents: newOpps,
+    playerHand: civs[0].hand,
+    opponents: newCivs.slice(1),
+    civilizations: newCivs,
     currentEvent: eventQueue.shift(),
     eventQueue,
+    eventLog: state.eventLog.concat(newEvents),
   }
 }

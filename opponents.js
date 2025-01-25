@@ -1,4 +1,4 @@
-import { RED, GREEN, BLUE, counterColors } from "./basics";
+import { RED, GREEN, BLUE, counterColors } from "./basics.js";
 
 function strongestComparator(a,b) {
   return b.strength - a.strength;
@@ -7,6 +7,7 @@ function strongestComparator(a,b) {
 export const defaultOpponent = {
   hand: [],
   portrait: '',
+  displayName: '',
   description: '',
   getMove: (state, hand) => hand[0],
 };
@@ -29,6 +30,7 @@ const barbarianHand = [
 export const barbarianOpponent = {
   hand: barbarianHand,
   portrait: 'img/barbarians.png',
+  displayName: 'Barbarians',
   description: '',
   getMove: (state, hand=[]) => {
     hand.sort(strongestComparator);
@@ -58,6 +60,7 @@ const nomadHand = [
 export const nomadOpponent = {
   hand: nomadHand,
   portrait: 'img/nomads.png',
+  displayName: 'Nomads',
   description: '',
   getMove: (state, hand=[]) => {
     const randomIndex = Math.floor(Math.random() * hand.length);

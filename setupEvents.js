@@ -1,4 +1,4 @@
-import { colors } from "./basics";
+import { colors } from "./basics.js";
 
 export const playerHand = [
   {
