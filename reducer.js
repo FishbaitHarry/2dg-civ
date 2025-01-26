@@ -17,6 +17,11 @@ export const defaultState = {
 const defaultAction = {
   playedCardIndex: 0,
 };
+const defaultEvent = {
+  type: 'plain',
+  description: 'Human readable',
+  card: null,
+};
 
 export function reduceState(state=defaultState, action=defaultAction) {
   const newEvents = [{ description: "New round" }];
@@ -24,6 +29,8 @@ export function reduceState(state=defaultState, action=defaultAction) {
   const oppPlayed = state.opponents.map( opp => opp.getMove(state, opp.hand) );
   const allPlayed = [playerPlayed].concat(oppPlayed);
   const sorted = allPlayed.sort( (a,b) => b.strength - a.strength);
+
+  newEvents.push({ description: `Played cards: ${allPlayed.map(c=>c.name).join(', ')}.` });
     
   // cards in pool, sorted
   const byColor = {

@@ -1,0 +1,51 @@
+:root {
+  --color-red: #B74948;
+  --color-green: #86C04F;
+  --color-blue: #58C6C7;
+  --color-purple: #9960CE;
+  --color-light-gray: #BBBBBB;
+  --color-dark-gray: #888888;
+}
+
+.event-row {
+  background: var(--color-purple);
+  margin: 5px;
+}
+
+.civ-list {
+  background: var(--color-dark-gray);
+  padding: 5px;
+}
+
+.civ-summary {
+  background: var(--color-light-gray);
+  margin: 5px;
+  padding: 5px;
+}
+
+.exp-card {
+  padding: 5px;
+  margin: 5px 0;
+  border-radius: 5px;
+}
+.exp-card.red {
+  background-color: var(--color-red);
+}
+.exp-card.green {
+  background-color: var(--color-green);
+}
+.exp-card.blue {
+  background-color: var(--color-blue);
+}
+
+.card-name {}
+.card-strength {
+  float: left;
+  font-weight: bold;
+  font-size: 2;
+  padding: 5px;
+}
+.card-description {
+  font-size: 0.8;
+  font-style: italic;
+}
