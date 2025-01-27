@@ -25,62 +25,67 @@ const defaultEvent = {
 
 export function reduceState(state=defaultState, action=defaultAction) {
   const newEvents = [{ description: "New round" }];
-  const playerPlayed = state.playerHand[action.playedCardIndex];
-  const oppPlayed = state.opponents.map( opp => opp.getMove(state, opp.hand) );
-  const allPlayed = [playerPlayed].concat(oppPlayed);
-  const sorted = allPlayed.sort( (a,b) => b.strength - a.strength);
+  const playerCiv = state.civilizations[0]; // human player
+  const playMap = new Map(); // maps civs to played cards
+  playMap.set(playerCiv, state.playerHand[action.playedCardIndex]);
+  state.opponents.forEach( opp => playMap.set(opp, opp.getMove(state, opp.hand) ) );
+  const allPlayed = Array.from(playMap.values()).sort( (a,b) => b.strength - a.strength);
 
   newEvents.push({ description: `Played cards: ${allPlayed.map(c=>c.name).join(', ')}.` });
-    
-  // cards in pool, sorted
-  const byColor = {
-    [RED]: sorted.filter( c => c.color == RED ),
-    [BLUE]: sorted.filter( c => c.color == BLUE ),
-    [GREEN]: sorted.filter( c => c.color == GREEN ),
+
+  const byColorPlayed = {
+    [RED]: allPlayed.filter( c => c.type == RED ),
+    [BLUE]: allPlayed.filter( c => c.type == BLUE ),
+    [GREEN]: allPlayed.filter( c => c.type == GREEN ),
   };
 
   const winners = [
-    byColor[RED][0],
-    byColor[BLUE][0],
-    byColor[GREEN][0],
+    byColorPlayed[RED][0],
+    byColorPlayed[BLUE][0],
+    byColorPlayed[GREEN][0],
   ].filter( e => !!e );
 
-  const losses = [];
-  if (byColor[RED].length) losses = losses.concat(byColor[GREEN]);
-  if (byColor[BLUE].length) losses = losses.concat(byColor[RED]);
-  if (byColor[GREEN].length) losses = losses.concat(byColor[BLUE]);
+  let losses = [];
+  if (byColorPlayed[RED].length) losses = losses.concat(byColorPlayed[GREEN]);
+  if (byColorPlayed[BLUE].length) losses = losses.concat(byColorPlayed[RED]);
+  if (byColorPlayed[GREEN].length) losses = losses.concat(byColorPlayed[BLUE]);
 
-  // these will be given out
+  // these will be given out, strongest of each color
+  const allPrizes = [state.currentEvent].concat(allPlayed).sort( (a,b) => b.strength - a.strength);
   const prizes = {
-    [RED]: byColor[RED][0],
-    [BLUE]: byColor[BLUE][0],
-    [GREEN]: byColor[GREEN][0],
+    [RED]: allPrizes.find( c => c.type == RED),
+    [BLUE]: allPrizes.find( c => c.type == BLUE),
+    [GREEN]: allPrizes.find( c => c.type == GREEN),
   };
+  const destroyed = []; // TODO: all except the prizes cards are destroyed as they are weak
 
-  // new player states
-  const humanPlayer = { hand: state.playerHand };
-  const civs = [humanPlayer].concat(state.opponents);
   // allPlayed has the same indexes, so index is player's id for this round
+  const newCivs = state.civilizations
+    .map( (civ, i) => {
+      const playedCard = playMap.get(civ);
+      let newHand = civ.hand.filter( c => !losses.includes(c) );
+      if (winners.includes(playedCard)) {
+        if (playedCard.type == RED) newHand.push(prizes[GREEN]);
+        if (playedCard.type == BLUE) newHand.push(prizes[RED]);
+        if (playedCard.type == GREEN) newHand.push(prizes[BLUE]);
+      }
+      newHand = newHand.filter( c => c != undefined );
+      return { ...civ, hand: newHand };
+    })
+    .filter( civ => civ.hand.length );
 
-  civs.forEach( (civ, i) => {
-    const hasWon = [];
-    if (winners[RED] == allPlayed[i]) hasWon.push(prizes[GREEN]);
-    if (winners[BLUE] == allPlayed[i]) hasWon.push(prizes[RED]);
-    if (winners[GREEN] == allPlayed[i]) hasWon.push(prizes[BLUE]);
-    civ.hand = civ.hand.filter( c => !losses.includes(c) ).concat(hasWon);
-  });
-
-  if (civs[0].hand.length == 0) {
+  if (newCivs[0].displayName != 'Player') {
     newEvents.push({ description: "You lost the game." });
   }
-  // remove defeated opponents
-  const newCivs = civs.filter( civ => civ.hand.length );
+
+  const newTopCard = eventQueue.shift();
+  newEvents.push({ description: `neutral card is: ${newTopCard.name}` });
 
   return {
-    playerHand: civs[0].hand,
+    playerHand: newCivs[0].hand,
     opponents: newCivs.slice(1),
     civilizations: newCivs,
-    currentEvent: eventQueue.shift(),
+    currentEvent: newTopCard,
     eventQueue,
     eventLog: state.eventLog.concat(newEvents),
   }
