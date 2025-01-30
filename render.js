@@ -20,9 +20,12 @@ const RootAppComponent = {
     console.log(this.state)
   },
   template: `
-    <div @playCard="acceptAction">
-      <CivilizationList :state="state" />
+    <div class="root-component" @playCard="acceptAction">
       <EventLogFeed :eventLog="state.eventLog" />
+      <div class="root-overview-panel">
+        <CivilizationList :state="state" />
+        <ActionPreview :state="state" />
+      </div>
     </div>
   `,
 }
@@ -31,9 +34,20 @@ const app = createApp(RootAppComponent);
 app.component('EventLogFeed', {
   props: ['eventLog'],
   template: `
-    <template v-for="item in eventLog">
-      <div class="event-row">{{ item.description }}</div>
-    </template>
+    <div class="event-log-feed">
+      <template v-for="item in eventLog">
+        <div class="event-row">{{ item.description }}</div>
+      </template>
+    </div>
+  `
+});
+app.component('ActionPreview', {
+  props: ['state'],
+  template: `
+    <div class="action-preview">
+      <div class="action-description">Currently contested advantage:</div>
+      <ExpandableCard :card="state.currentEvent" />
+    </div>
   `
 });
 app.component('CivilizationList', {

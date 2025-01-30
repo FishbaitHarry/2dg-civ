@@ -79,7 +79,6 @@ export function reduceState(state=defaultState, action=defaultAction) {
   }
 
   const newTopCard = eventQueue.shift();
-  newEvents.push({ description: `neutral card is: ${newTopCard.name}` });
 
   return {
     playerHand: newCivs[0].hand,
