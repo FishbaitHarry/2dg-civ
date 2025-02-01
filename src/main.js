@@ -1,10 +1,6 @@
-import { defaultState, reduceState } from "./model/reducer.js";
+import { reduceState } from "./model/reducer.js";
 import { render } from "./render/render.js";
+import { startingState } from "./model/state.js";
 
 const rootEl = document.getElementById('app');
-render(rootEl, defaultState);
-console.log('main.js STARTED')
-
-// for debug
-window.gameState = defaultState;
-window.gameReducer = reduceState;
+render(rootEl, startingState);

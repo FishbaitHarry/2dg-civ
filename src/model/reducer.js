@@ -1,32 +1,5 @@
 import { RED, GREEN, BLUE, colors, counterColors } from "./basics.js";
-import { playerHand, eventQueue } from "./setupEvents.js";
-import { barbarianOpponent, nomadOpponent } from "./opponents.js";
-
-const defaultPlayer = {
-  displayName: 'Player',
-  hand: playerHand,
-};
-const specialIcons = { // unused yet
-  hasBeenLost: null,
-  hasBeenGained: null,
-};
-export const defaultState = {
-  playerHand,
-  opponents: [barbarianOpponent, nomadOpponent],
-  civilizations: [defaultPlayer, barbarianOpponent, nomadOpponent],
-  specialIcons,
-  currentEvent: eventQueue.shift(),
-  eventQueue,
-  eventLog: [],
-};
-const defaultAction = {
-  playedCardIndex: 0,
-};
-const defaultEvent = {
-  type: 'plain',
-  description: 'Human readable',
-  card: null,
-};
+import { defaultState, defaultAction } from "./basics.js";
 
 export function reduceState(state=defaultState, action=defaultAction) {
   const newEvents = [{ description: "New round" }];
@@ -95,14 +68,14 @@ export function reduceState(state=defaultState, action=defaultAction) {
     newEvents.push({ description: "You lost the game." });
   }
 
-  const newTopCard = eventQueue.shift();
+  const newTopCard = state.eventQueue.shift();
 
   return {
     playerHand: newCivs[0].hand,
     opponents: newCivs.slice(1),
     civilizations: newCivs,
     currentEvent: newTopCard,
-    eventQueue,
+    eventQueue: state.eventQueue,
     eventLog: state.eventLog.concat(newEvents),
   }
 }
