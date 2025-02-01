@@ -1,5 +1,5 @@
-import { createApp, shallowRef, ref, triggerRef, inject, computed, watch } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
-import { reduceState } from './reducer.js';
+import { createApp, shallowRef, ref, triggerRef, inject } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+import { reduceState } from '../model/reducer.js';
 
 
 const RootAppComponent = {
@@ -33,12 +33,33 @@ const app = createApp(RootAppComponent);
 
 app.component('EventLogFeed', {
   props: ['eventLog'],
+  updated() {
+    const container = this.$refs['scrollable'];
+    const offset = container.scrollHeight;
+    container.scrollTo({top: offset, behavior:'smooth'});
+  },
   template: `
-    <div class="event-log-feed">
+    <div class="event-log-feed" ref="scrollable">
       <template v-for="item in eventLog">
         <div class="event-row">{{ item.description }}</div>
+        <RoundPlayedCardsEvent v-if="item.playMap" :item="item"/>
       </template>
     </div>
+  `
+});
+app.component('RoundPlayedCardsEvent', {
+  props: ['item'],
+  setup(props) {
+    return {
+      civs: props.item.playMap.keys(),
+      cards: props.item.playMap.values(),
+    }
+  },
+  template: `
+    <span v-for="(civ, index) in civs">
+      {{ civ.displayName }} played:
+      <ExpandableCard :card="item.playMap.get(civ)" />
+    </span>
   `
 });
 app.component('ActionPreview', {
@@ -89,6 +110,15 @@ app.component('ExpandableCard', {
       <span class="card-strength">{{ card.strength }}</span>
       <header class="card-name lg-show">{{ card.name }}</header>
       <span class="card-description lg-show">{{ card.description }}</span>
+    </div>
+  `
+});
+app.component('ColorsReminder', {
+  template: `
+    <div class="colors-reminder">
+      <div><span class="red">RED</span>     takes <span class="green">GREEN</span>
+      <div><span class="green">GREEN</span> takes <span class="blue">BLUE</span>
+      <div><span class="blue">BLUE</span>   takes <span class="red">RED</span>
     </div>
   `
 });

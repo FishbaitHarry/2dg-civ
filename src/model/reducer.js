@@ -6,10 +6,15 @@ const defaultPlayer = {
   displayName: 'Player',
   hand: playerHand,
 };
+const specialIcons = { // unused yet
+  hasBeenLost: null,
+  hasBeenGained: null,
+};
 export const defaultState = {
   playerHand,
   opponents: [barbarianOpponent, nomadOpponent],
   civilizations: [defaultPlayer, barbarianOpponent, nomadOpponent],
+  specialIcons,
   currentEvent: eventQueue.shift(),
   eventQueue,
   eventLog: [],
@@ -27,11 +32,17 @@ export function reduceState(state=defaultState, action=defaultAction) {
   const newEvents = [{ description: "New round" }];
   const playerCiv = state.civilizations[0]; // human player
   const playMap = new Map(); // maps civs to played cards
+  const playersCard =  state.playerHand[action.playedCardIndex];
   playMap.set(playerCiv, state.playerHand[action.playedCardIndex]);
   state.opponents.forEach( opp => playMap.set(opp, opp.getMove(state, opp.hand) ) );
   const allPlayed = Array.from(playMap.values()).sort( (a,b) => b.strength - a.strength);
 
-  newEvents.push({ description: `Played cards: ${allPlayed.map(c=>c.name).join(', ')}.` });
+  newEvents.push({
+    type: 'roundPlayedCards',
+    description: `Played cards: ${allPlayed.map(c=>c.name).join(', ')}.`,
+    cards: allPlayed,
+    playMap: playMap,
+  });
 
   const byColorPlayed = {
     [RED]: allPlayed.filter( c => c.type == RED ),
@@ -49,6 +60,12 @@ export function reduceState(state=defaultState, action=defaultAction) {
   if (byColorPlayed[RED].length) losses = losses.concat(byColorPlayed[GREEN]);
   if (byColorPlayed[BLUE].length) losses = losses.concat(byColorPlayed[RED]);
   if (byColorPlayed[GREEN].length) losses = losses.concat(byColorPlayed[BLUE]);
+  
+  if (losses.includes(playersCard)) newEvents.push({
+    type: 'roundLostCard',
+    description: `You lost your played card.`,
+    card: playersCard,
+  });
 
   // these will be given out, strongest of each color
   const allPrizes = [state.currentEvent].concat(allPlayed).sort( (a,b) => b.strength - a.strength);
