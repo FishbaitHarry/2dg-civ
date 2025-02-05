@@ -63,19 +63,19 @@ let redQueue = [
 let blueQueue = [
   {
     name: 'Astrology',
-    description: '',
+    description: 'Stars might have no magic power, but can still predict the future.',
     type: BLUE,
     strength: 3,
   },
   {
     name: 'Wheel',
-    description: '',
+    description: 'Simple invention, but a foundation for both army and trade.',
     type: BLUE,
     strength: 4,
   },
   {
     name: 'Agriculture',
-    description: '',
+    description: 'No longer must we relocate to keep our people fed.',
     type: BLUE,
     strength: 5,
   },

@@ -59,7 +59,7 @@ export function reduceState(state=defaultState, action=defaultAction) {
         if (playedCard.type == BLUE) newHand.push(prizes[RED]);
         if (playedCard.type == GREEN) newHand.push(prizes[BLUE]);
       }
-      newHand = newHand.filter( c => c != undefined );
+      newHand = newHand.filter( c => c != undefined ).sort(cardComparison);
       return { ...civ, hand: newHand };
     })
     .filter( civ => civ.hand.length );
@@ -78,4 +78,10 @@ export function reduceState(state=defaultState, action=defaultAction) {
     eventQueue: state.eventQueue,
     eventLog: state.eventLog.concat(newEvents),
   }
+}
+
+// for sorting cards in hand
+function cardComparison(a, b) {
+  if (a.type == b.type) return a.strength - b.strength;
+  return (b.type == RED)*2 + (b.type == GREEN)*1 - (a.type == RED)*2 - (a.type == GREEN)*1;
 }

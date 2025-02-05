@@ -4,6 +4,7 @@ import { playerHand, eventQueue } from "./setupEvents.js";
 // Set up starting state for simple game.
 const humanPlayer = {
   displayName: 'Player',
+  portrait: 'img/player.png',
   hand: playerHand,
 };
 export const startingState = {

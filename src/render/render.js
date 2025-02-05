@@ -58,7 +58,9 @@ app.component('RoundPlayedCardsEvent', {
   template: `
     <span v-for="(civ, index) in civs">
       {{ civ.displayName }} played:
-      <ExpandableCard :card="item.playMap.get(civ)" />
+      <ExpandableCard :card="item.playMap.get(civ)">
+        <CivPortrait :civ="civ" />
+      </ExpandableCard>
     </span>
   `
 });
@@ -67,7 +69,7 @@ app.component('ActionPreview', {
   template: `
     <div class="action-preview">
       <div class="action-description">Currently contested advantage:</div>
-      <ExpandableCard :card="state.currentEvent" />
+      <ExpandableCard :card="state.currentEvent" :expanded="true" />
     </div>
   `
 });
@@ -85,8 +87,9 @@ app.component('CivilizationSummary', {
   props: ['civ', 'active'],
   template: `
     <div class="civ-summary">
-      <header>{{ civ.displayName }}</header>
+      <header class="civ-name">{{ civ.displayName }}</header>
       <div class="card-row expandable">
+        <CivPortrait :civ="civ" />
         <template v-for="(item, index) in civ.hand">
           <ExpandableCard :card="item" :enabled="active" :clickIndex="index" />
         </template>
@@ -103,13 +106,14 @@ app.component('ExpandableCard', {
     }
     return { onClick };
   },
-  props: ['card', 'enabled', 'clickIndex'],
+  props: ['card', 'enabled', 'clickIndex', 'expanded', 'modifier'],
   emits: ['playCard'],
   template: `
-    <div :class="{[card.type]:true, 'exp-card':true, 'enabled':enabled}" @click="onClick">
+    <div :class="{[card.type]:true, 'exp-card':true, 'enabled':enabled, 'expanded':expanded}" @click="onClick">
       <span class="card-strength">{{ card.strength }}</span>
       <header class="card-name lg-show">{{ card.name }}</header>
       <span class="card-description lg-show">{{ card.description }}</span>
+      <span class="mini-slot"><slot></slot></span>
     </div>
   `
 });
@@ -121,6 +125,10 @@ app.component('ColorsReminder', {
       <div><span class="blue">BLUE</span>   takes <span class="red">RED</span>
     </div>
   `
+});
+app.component('CivPortrait', {
+  props: ['civ'],
+  template: `<img :src="civ.portrait" class="civ-portrait exp-circle" :label="civ.displayName" />`
 });
 
 
