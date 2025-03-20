@@ -1,5 +1,5 @@
 import { barbarianOpponent, nomadOpponent } from "./opponents.js";
-import { playerHand, eventQueue } from "./setupEvents.js";
+import { playerHand, eventQueue } from "./cards/setupEvents.js";
 
 // Set up starting state for simple game.
 const humanPlayer = {
