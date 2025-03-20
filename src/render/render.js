@@ -22,6 +22,7 @@ const RootAppComponent = {
   template: `
     <div class="root-component" @playCard="acceptAction">
       <EventLogFeed :eventLog="state.eventLog" />
+      <ColorsReminder />
       <div class="root-overview-panel">
         <CivilizationList :state="state" />
         <ActionPreview :state="state" />
@@ -118,11 +119,13 @@ app.component('ExpandableCard', {
   `
 });
 app.component('ColorsReminder', {
+  setup() {return {hidden: ref(false)}; },
   template: `
-    <div class="colors-reminder">
-      <div><span class="red">RED</span>     takes <span class="green">GREEN</span>
-      <div><span class="green">GREEN</span> takes <span class="blue">BLUE</span>
-      <div><span class="blue">BLUE</span>   takes <span class="red">RED</span>
+    <div class="colors-reminder" :class="{'hidden':hidden}" @click="hidden=true">
+      <div><span class="red">RED</span>     takes <span class="green">GREEN</span></div>
+      <div><span class="green">GREEN</span> takes <span class="blue">BLUE</span></div>
+      <div><span class="blue">BLUE</span>   takes <span class="red">RED</span></div>
+      <div>Click to close</div>
     </div>
   `
 });

@@ -26,6 +26,14 @@ html, body, #app, .root-component {
 .root-overview-panel {
   flex: 0 0 auto;
 }
+.colors-reminder {
+  position: absolute;
+  top: 0; right: 0;
+  background-color: var(--color-light-gray);
+}
+.colors-reminder.hidden {
+  display: none;
+}
 
 .action-preview {
   padding: 10px;
