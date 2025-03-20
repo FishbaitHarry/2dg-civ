@@ -1,5 +1,6 @@
 import { RED, GREEN, BLUE, colors, counterColors } from "./basics.js";
 import { defaultState, defaultAction } from "./basics.js";
+import { getNextAdvantage } from "./cards/advantages.js";
 import { getNewCivs } from "./civs/index.js";
 
 export function reduceState(state=defaultState, action=defaultAction) {
@@ -73,7 +74,7 @@ export function reduceState(state=defaultState, action=defaultAction) {
     newEvents.push({ description: "You lost the game." });
   }
 
-  const newTopCard = state.eventQueue.shift();
+  const newTopCard = getNextAdvantage(state);
 
   return {
     turnNumber: state.turnNumber + 1,

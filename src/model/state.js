@@ -8,6 +8,7 @@ const humanPlayer = {
   hand: playerHand,
 };
 export const startingState = {
+  turnNumber: 0,
   playerHand,
   opponents: [barbarianOpponent, nomadOpponent],
   civilizations: [humanPlayer, barbarianOpponent, nomadOpponent],
