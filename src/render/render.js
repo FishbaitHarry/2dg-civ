@@ -41,7 +41,7 @@ app.component('EventLogFeed', {
   template: `
     <div class="event-log-feed" ref="scrollable">
       <template v-for="item in eventLog">
-        <div class="event-row">{{ item.description }}</div>
+        <div class="event-row" v-if="!item.playMap">{{ item.description }}</div>
         <RoundPlayedCardsEvent v-if="item.playMap" :item="item"/>
       </template>
     </div>

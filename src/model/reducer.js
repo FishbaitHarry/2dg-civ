@@ -1,5 +1,6 @@
 import { RED, GREEN, BLUE, colors, counterColors } from "./basics.js";
 import { defaultState, defaultAction } from "./basics.js";
+import { getNewCivs } from "./civs/index.js";
 
 export function reduceState(state=defaultState, action=defaultAction) {
   const newEvents = [{ description: "New round" }];
@@ -64,6 +65,10 @@ export function reduceState(state=defaultState, action=defaultAction) {
     })
     .filter( civ => civ.hand.length );
 
+  getNewCivs(state).forEach( civ => {
+    newEvents.push({ description: `New civilization of ${civ.displayName} has joined the struggle.` });
+    newCivs.push(civ);
+  });
   if (newCivs[0].displayName != 'Player') {
     newEvents.push({ description: "You lost the game." });
   }
@@ -71,6 +76,7 @@ export function reduceState(state=defaultState, action=defaultAction) {
   const newTopCard = state.eventQueue.shift();
 
   return {
+    turnNumber: state.turnNumber + 1,
     playerHand: newCivs[0].hand,
     opponents: newCivs.slice(1),
     civilizations: newCivs,

@@ -34,6 +34,7 @@ export const defaultAction = {
   playedCardIndex: 0,
 };
 export const defaultState = {
+  turnNumber: 0,
   playerHand: [defaultCard],
   opponents: [defaultPlayer],
   civilizations: [defaultPlayer],
