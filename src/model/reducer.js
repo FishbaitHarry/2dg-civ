@@ -1,4 +1,4 @@
-import { RED, GREEN, BLUE, colors, counterColors } from "./basics.js";
+import { RED, GREEN, BLUE, colors, counterColors, specialIcons } from "./basics.js";
 import { defaultState, defaultAction } from "./basics.js";
 import { getNextAdvantage } from "./cards/advantages.js";
 import { getNewCivs } from "./civs/index.js";
@@ -50,6 +50,7 @@ export function reduceState(state=defaultState, action=defaultAction) {
     [GREEN]: allPrizes.find( c => c.type == GREEN),
   };
   const destroyed = []; // TODO: all except the prizes cards are destroyed as they are weak
+  let playersPrize = null; // if player won something, we will put it here later
 
   // allPlayed has the same indexes, so index is player's id for this round
   const newCivs = state.civilizations
@@ -60,6 +61,7 @@ export function reduceState(state=defaultState, action=defaultAction) {
         if (playedCard.type == RED) newHand.push(prizes[GREEN]);
         if (playedCard.type == BLUE) newHand.push(prizes[RED]);
         if (playedCard.type == GREEN) newHand.push(prizes[BLUE]);
+        if (i == 0) playersPrize = newHand[newHand.length - 1];
       }
       newHand = newHand.filter( c => c != undefined ).sort(cardComparison);
       return { ...civ, hand: newHand };
@@ -81,8 +83,12 @@ export function reduceState(state=defaultState, action=defaultAction) {
     playerHand: newCivs[0].hand,
     opponents: newCivs.slice(1),
     civilizations: newCivs,
+    specialIcons: {
+      hasBeenLost: losses.includes(playersCard) ? [playersCard] : [],
+      hasBeenGained: playersPrize ? [playersPrize] : [],
+    },
     currentEvent: newTopCard,
-    eventQueue: state.eventQueue,
+    eventQueue: state.eventQueue, // unchanging
     eventLog: state.eventLog.concat(newEvents),
   }
 }

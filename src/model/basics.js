@@ -22,8 +22,8 @@ export const defaultPlayer = {
   hand: [defaultCard],
 };
 export const specialIcons = { // unused yet
-  hasBeenLost: null,
-  hasBeenGained: null,
+  hasBeenLost: [],
+  hasBeenGained: [],
 };
 export const defaultEvent = {
   type: 'plain',

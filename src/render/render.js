@@ -1,8 +1,10 @@
 import { createApp, shallowRef, ref, triggerRef, inject } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
 import { reduceState } from '../model/reducer.js';
+
 import colorsReminder from './colors-reminder.js';
 import expandableCard from './expandable-card.js';
-
+import roundLog from './round-log.js';
+import civSummary from './civ-summary.js';
 
 const RootAppComponent = {
   setup() {
@@ -45,28 +47,12 @@ app.component('EventLogFeed', {
     <div class="event-log-feed" ref="scrollable">
       <template v-for="item in eventLog">
         <div class="event-row" v-if="!item.playMap">{{ item.description }}</div>
-        <RoundPlayedCardsEvent v-if="item.playMap" :item="item"/>
+        <RoundLog v-if="item.playMap" :item="item"/>
       </template>
     </div>
   `
 });
-app.component('RoundPlayedCardsEvent', {
-  props: ['item'],
-  setup(props) {
-    return {
-      civs: props.item.playMap.keys(),
-      cards: props.item.playMap.values(),
-    }
-  },
-  template: `
-    <span v-for="(civ, index) in civs">
-      {{ civ.displayName }} played:
-      <ExpandableCard :card="item.playMap.get(civ)">
-        <CivPortrait :civ="civ" />
-      </ExpandableCard>
-    </span>
-  `
-});
+
 app.component('ActionPreview', {
   props: ['state'],
   template: `
@@ -81,30 +67,22 @@ app.component('CivilizationList', {
   template: `
     <div class="civ-list">
       <template v-for="(item, index) in state.civilizations" :key="item.displayName">
-        <CivilizationSummary :civ="item" :active="index == 0" />
+        <CivSummary :civ="item" :active="index == 0" :special="state.specialIcons" />
       </template>
     </div>
   `
 });
-app.component('CivilizationSummary', {
-  props: ['civ', 'active'],
-  template: `
-    <div class="civ-summary">
-      <header class="civ-name">{{ civ.displayName }}</header>
-      <div class="card-row expandable">
-        <CivPortrait :civ="civ" />
-        <template v-for="(item, index) in civ.hand">
-          <ExpandableCard :card="item" :enabled="active" :clickIndex="index" />
-        </template>
-      </div>
-    </div>
-  `
-});
+app.component('CivSummary', civSummary);
 app.component('ExpandableCard', expandableCard);
 app.component('ColorsReminder', colorsReminder);
+app.component('RoundLog', roundLog);
 app.component('CivPortrait', {
   props: ['civ'],
   template: `<img :src="civ.portrait" class="civ-portrait exp-circle" :label="civ.displayName" />`
+});
+app.component('StatusIcon', {
+  props: ['name'],
+  template: `<img :src="'img/' + name + '.png'" class="status-icon" :label="name" />`
 });
 
 

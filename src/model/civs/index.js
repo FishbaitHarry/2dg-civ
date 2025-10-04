@@ -53,6 +53,9 @@ const opponentQueue = list.map( (civName,index) => {
   return civ;
 });
 
+opponentQueue[0].portrait = 'img/mesopotamian.png';
+opponentQueue[1].portrait = 'img/egyptian.png';
+
 export function getNewCivs(state) {
   const { turnNumber, civilizations } = state;
   // should there be a civilization queue waiting in the state? probably yes

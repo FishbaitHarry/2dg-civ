@@ -4,7 +4,7 @@
   "description": "Simple Civ Game",
   "main": "main.js",
   "scripts": {
-    "test": "http-server ."
+    "test": "http-server src/"
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/FishbaitHarry/2dg-civ/issues"
   },
-  "homepage": "https://github.com/FishbaitHarry/2dg-civ#readme"
+  "homepage": "https://github.com/FishbaitHarry/2dg-civ#readme",
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
 }
